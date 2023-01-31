@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# cdk8s ignores
+manifest/cdk8s/dist/construct-metadata.json
+manifest/cdk8s/Pipfile
