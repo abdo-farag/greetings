@@ -63,6 +63,14 @@ curl -k --header 'Host: a.lab.io' https://IP_ADDRESS/
 curl -k --header 'Host: b.lab.io' https://IP_ADDRESS/
 curl -k --header 'Host: c.lab.io' https://IP_ADDRESS/
 ```
+### Testing HPA Autoscalling
+```sh
+hey -n 100000 -c 200 -q 10000 https://a.lab.io
+```
+Monitor hpa autoscalling changes
+```sh
+watch -n0.1 kubectl get hpa -n a-greetings-c82e96a1
+````
 
 ### To use cdk8s to make some changes
 - install cdk8s from [documentation](https://cdk8s.io/docs/latest/getting-started/)
