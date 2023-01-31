@@ -24,8 +24,8 @@ build:
 
 run:
 	@docker run -tid -p 8081:8000 --name greetings-a -e CUSTOMER='A' greetings:latest 
-	@docker run -tid -p 8082:8000 --name greetings-b -e CUSTOMER='b' greetings:latest 
-	@docker run -tid -p 8083:8000 --name greetings-c -e CUSTOMER='c' greetings:latest 
+	@docker run -tid -p 8082:8000 --name greetings-b -e CUSTOMER='B' greetings:latest 
+	@docker run -tid -p 8083:8000 --name greetings-c -e CUSTOMER='C' greetings:latest 
 
 test-api:
 	@sleep 2

@@ -45,10 +45,10 @@ fi
 
 # Test the API function
 test_api() {
-    curl -s localhost:8080/ #> /dev/null 2>&1
+    curl -s localhost:808$2/ #> /dev/null 2>&1
     if [ $? -ne 0 ]; then
         error "API test for customer $1 failed, exiting..."
-        docker stop greetings >/dev/null 2>&1 && docker rm greetings > /dev/null 2>&1
+        docker rm -f greetings-a greetings-b greetings-c >/dev/null 2>&1
         exit 1
     else
         info "API test for customer $1 passed"
@@ -57,22 +57,12 @@ test_api() {
 
 
 # Start a container from the image
-docker run -tid -p 8080:8000 --name greetings -e CUSTOMER='A' greetings:latest >/dev/null 2>&1
-sleep 2
-test_api A
-docker stop greetings >/dev/null 2>&1 && docker rm greetings > /dev/null 2>&1
-
-docker run -tid -p 8080:8000 --name greetings -e CUSTOMER='B' greetings:latest >/dev/null 2>&1
-sleep 2
-test_api B
-docker stop greetings >/dev/null 2>&1 && docker rm greetings > /dev/null 2>&1
-
-docker run -tid -p 8080:8000 --name greetings -e CUSTOMER='C' greetings:latest >/dev/null 2>&1
-sleep 2
-test_api C
+docker run -tid -p 8081:8000 --name greetings-a -e CUSTOMER='A' greetings:latest >/dev/null 2>&1
+docker run -tid -p 8082:8000 --name greetings-b -e CUSTOMER='B' greetings:latest >/dev/null 2>&1
+docker run -tid -p 8083:8000 --name greetings-c -e CUSTOMER='C' greetings:latest >/dev/null 2>&1
 
 # Check if container start successfuly
-status=`docker inspect --format '{{json .State.Running}}' greetings`
+status=`docker inspect --format '{{json .State.Running}}' greetings-a`
 
 # Check if docker build successfuly
 if ($status) ; then
@@ -82,10 +72,16 @@ else
   exit 1
 fi
 
+# run test api for every customer
+sleep 2
+test_api A 1
+test_api B 2
+test_api C 3
 
 
 # Stop and remove the container
-docker stop greetings >/dev/null 2>&1 && docker rm greetings > /dev/null 2>&1
+docker rm -f greetings-a greetings-b greetings-c >/dev/null 2>&1
+#docker stop greetings >/dev/null 2>&1 && docker rm greetings > /dev/null 2>&1
 
 # Tag the image with the version number
 docker tag greetings:latest registry.lab.io:5000/greetings:latest > /dev/null 2>&1
