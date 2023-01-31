@@ -38,6 +38,7 @@ flask --app greetings.py run
 #### Test the API by sending a GET request to the endpoint for each customer
 ```sh
 curl -s localhost:5000
+"Hi"
 ```
 
 ## Automated Deployment
