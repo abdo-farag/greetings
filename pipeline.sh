@@ -16,7 +16,12 @@ error() {
 }
 
 # Run the tests
-python -m unittest discover app > /dev/null 2>&1
+#python -m unittest discover app > /dev/null 2>&1
+cd app
+export CUSTOMER=A; python -m unittest test_greetings.py -k test_greet_customer_A > /dev/null 2>&1
+export CUSTOMER=B; python -m unittest test_greetings.py -k test_greet_customer_B > /dev/null 2>&1
+export CUSTOMER=C; python -m unittest test_greetings.py -k test_greet_customer_C > /dev/null 2>&1
+cd -  > /dev/null 2>&1
 
 # Check if the tests passed
 if [ $? -ne 0 ]; then
@@ -37,8 +42,34 @@ else
   info "Docker build succeed"
 fi
 
+
+# Test the API function
+test_api() {
+    curl -s localhost:8080/ #> /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+        error "API test for customer $1 failed, exiting..."
+        docker stop greetings >/dev/null 2>&1 && docker rm greetings > /dev/null 2>&1
+        exit 1
+    else
+        info "API test for customer $1 passed"
+    fi
+}
+
+
 # Start a container from the image
-docker run -tid -p 8080:8000 --name greetings greetings:latest >/dev/null 2>&1
+docker run -tid -p 8080:8000 --name greetings -e CUSTOMER='A' greetings:latest >/dev/null 2>&1
+sleep 2
+test_api A
+docker stop greetings >/dev/null 2>&1 && docker rm greetings > /dev/null 2>&1
+
+docker run -tid -p 8080:8000 --name greetings -e CUSTOMER='B' greetings:latest >/dev/null 2>&1
+sleep 2
+test_api B
+docker stop greetings >/dev/null 2>&1 && docker rm greetings > /dev/null 2>&1
+
+docker run -tid -p 8080:8000 --name greetings -e CUSTOMER='C' greetings:latest >/dev/null 2>&1
+sleep 2
+test_api C
 
 # Check if container start successfuly
 status=`docker inspect --format '{{json .State.Running}}' greetings`
@@ -51,22 +82,7 @@ else
   exit 1
 fi
 
-sleep 2
 
-# Test the API function
-test_api() {
-    curl -s localhost:8080/$1 #> /dev/null 2>&1
-    if [ $? -ne 0 ]; then
-        error "API test for customer $1 failed, exiting..."
-        exit 1
-    else
-        info "API test for customer $1 passed"
-    fi
-}
-
-test_api A
-test_api B
-test_api C
 
 # Stop and remove the container
 docker stop greetings >/dev/null 2>&1 && docker rm greetings > /dev/null 2>&1
@@ -76,3 +92,6 @@ docker tag greetings:latest registry.lab.io:5000/greetings:latest > /dev/null 2>
 
 # Push the image to the container registry
 docker push registry.lab.io:5000/greetings:latest
+
+# deploy the application to Kubernetes Cluster
+kubectl apply -f manifest/cdk8s/dist/a.k8s.yaml -f manifest/cdk8s/dist/b.k8s.yaml -f manifest/cdk8s/dist/c.k8s.yaml

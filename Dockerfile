@@ -8,7 +8,7 @@ RUN adduser -D app
 RUN mkdir -p /home/app/greetings
 
 # Copy the app code to the 'greetings' directory
-COPY ./app/  /home/app/greetings
+COPY --chown=app:app ./app/  /home/app/greetings
 
 # Set the working directory to the 'greetings' directory
 WORKDIR /home/app/greetings
@@ -19,6 +19,9 @@ RUN pip install -r requirements.txt
 
 # Set the user to the non-root user 'app'
 USER app
+
+# Adjust customer name
+ENV CUSTOMER ''
 
 # Expose port 8000 to the outside world
 EXPOSE 8000

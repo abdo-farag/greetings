@@ -1,8 +1,14 @@
 from flask import Flask, jsonify
 from flask_healthz import healthz, HealthError
+import os
+
 
 # Creating an instance of the Flask class
 app = Flask("greetings")
+
+
+# Reading the value of the environment variable
+customer = os.getenv("CUSTOMER")
 
 # Creating a dictionary that holds the customer's name and their specific salutation
 customers = {
@@ -11,9 +17,9 @@ customers = {
     "C": "Moin"
 }
 
-# Creating the endpoint '/<customer>' which allows only GET requests
-@app.route('/<customer>', methods=['GET'])
-def greetings(customer):
+# Creating the endpoint '/' which allows only GET requests
+@app.route('/', methods=['GET'])
+def greetings():
     # Get the specific salutation of the customer, if not found return "Not Found"
     greeting = customers.get(customer, "Not Found")
 
