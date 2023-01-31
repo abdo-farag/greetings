@@ -65,7 +65,7 @@ curl -k --header 'Host: c.lab.io' https://IP_ADDRESS/
 ```
 
 ### To use cdk8s to make some changes
-- install cdk8s from docs
+- install cdk8s from [documentation](https://cdk8s.io/docs/latest/getting-started/)
 - navigate to manifest/cdk8s
 - do some changes
 - run
