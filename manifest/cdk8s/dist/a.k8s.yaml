@@ -30,7 +30,7 @@ spec:
         - env:
             - name: CUSTOMER
               value: A
-          image: registry.lab.io:5000/greetings:1.0.0
+          image: abdofarag/greetings:latest
           imagePullPolicy: Always
           livenessProbe:
             failureThreshold: 3

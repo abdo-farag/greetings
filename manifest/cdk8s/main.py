@@ -23,7 +23,7 @@ class GreetingsApp(Chart):
             containers=[
                 ContainerProps(
                     name="greetings-{}".format(ns),
-                    image="registry.lab.io:5000/greetings:1.0.0",
+                    image="abdofarag/greetings:latest",
                     image_pull_policy=ImagePullPolicy(ImagePullPolicy.ALWAYS),
                     ports=[ContainerPort(number=8000, name="http", protocol=Protocol.TCP)],                   
                     liveness=Probe.from_http_get(path="/healthz/live", port=8000, initial_delay_seconds=Duration.seconds(5)),
